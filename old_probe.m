@@ -6,7 +6,7 @@ function [r, grid_system, wind_power_intigrated] = probe(config_grid)
     % here are indices of time the simulation should run
     number_steps = 24;
     number_days = 36;
-    % the grid system will be initialisated
+   % the grid system will be initialisated
     grid_system = Power_grid(config_grid, number_steps, number_days);
 
     %% wind power data form wind generator

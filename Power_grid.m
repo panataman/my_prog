@@ -3,8 +3,8 @@ classdef Power_grid < handle % it have to be a handle class because of call by r
     %   Detailed explanation goes here
 
     properties
-        busses %
-        hourly_demand_day % what THE FUCK!????
+	busses %
+	hourly_demand_day % what THE FUCK!????
 	hourly_demand_night %
     end
 
