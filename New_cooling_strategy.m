@@ -20,7 +20,7 @@ classdef New_cooling_strategy < handle
             count_bus = 0;
             time_step = 1/60;
             electric_power_consum = 0;
-            wind_power_intigrated = 0;
+            wind_power_integrated = 0;
             fridges_range_for_charging_RT = zeros(1,12);
             
             for s = 1:length(busses)
@@ -36,12 +36,12 @@ classdef New_cooling_strategy < handle
                     for j = 1:length([busses(s).supermarkets(i).refrigerators])
 
                         % before the estimation of temperature for the next step can be
-                        % startet, the dessition for the power, which will be adjudged
+                        % started, the dessition for the power, which will be adjudged
                         % for each fridge, has be falled
                         [Q_losses, Q_losses_max, time_to_T_critical_max] = busses(s).supermarkets(i).refrigerators(j).sum_all_losses(...
 			    number_steps, count_number_steps, count_number_days, number_days);
                         
-                        % this function estimates the heat power the fridge can maximum intigrate for the moment
+                        % this function estimates the heat power the fridge can maximum integrate for the moment
                         resid_capacity = busses(s).supermarkets(i).refrigerators(j).estimator_full_heat_capacity(count_number_steps, ...
                             count_number_days, Q_losses);
                         
@@ -52,7 +52,7 @@ classdef New_cooling_strategy < handle
                                 time_to_T_critical_max ...
                                 busses(s).supermarkets(i). ...
                                 refrigerators(j). ...
-                                current_temperature_capacity(count_number_steps, ...
+                                temperature_capacity_history(count_number_steps, ...
                                 count_number_days) ...
                                 count_bus ...
                                 count_supermarket ...
@@ -64,7 +64,7 @@ classdef New_cooling_strategy < handle
                                 epsilon ...
                                 resid_capacity ...
                                 electric_power_consum ...
-                                wind_power_intigrated ...
+                                wind_power_integrated ...
                                 ];
                             
                         else
@@ -73,7 +73,7 @@ classdef New_cooling_strategy < handle
                             fridges_range_for_charging_RT = [...
                                 fridges_range_for_charging_RT; ...
                                 time_to_T_critical_max ...                      %1
-                                busses(s).supermarkets(i).refrigerators(j).current_temperature_capacity(count_number_steps, count_number_days) ...		%2
+                                busses(s).supermarkets(i).refrigerators(j).temperature_capacity_history(count_number_steps, count_number_days) ...		%2
                                 count_bus ...                                   %3
                                 count_supermarket ...                           %4
                                 count_refrigerator ...                          %5
@@ -83,7 +83,7 @@ classdef New_cooling_strategy < handle
                                 busses(s).supermarkets(i).refrigerators(j).epsilon ... %9
                                 resid_capacity ...                              %10
                                 electric_power_consum ...                       %11
-                                wind_power_intigrated ...                       %12
+                                wind_power_integrated ...                       %12
                                 ];
                             
                         end
@@ -162,7 +162,7 @@ classdef New_cooling_strategy < handle
                                 fprintf('\ntime_crit: %f\n',fridges_range_for_charging_RT(i,1))
                                 fprintf('Q_losses: %f\n',fridges_range_for_charging_RT(i,7))
                             end
-                            % save the time period that was intigrated
+                            % save the time period that was integrated
                             fridges_range_for_charging_RT(i, 1) = ...
                                 fridges_range_for_charging_RT(i, 1) + fridges_range_for_charging_RT(i,8) ;
                             
