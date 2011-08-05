@@ -5,7 +5,6 @@ classdef Supermarket < handle
 	properties
 	    refrigerators
 	end
-	
 	methods
 		function obj = Supermarket(fridges, number_steps, days)
 		    for i = 1 : length(fridges{1})
@@ -19,5 +18,4 @@ classdef Supermarket < handle
 			end % end for
 		end % end function Supermarket
 	end % end methods
-
 end % end classdef
