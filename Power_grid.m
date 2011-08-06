@@ -26,30 +26,29 @@ classdef Power_grid < handle % handle because of call by reference (speed)
 				days)];
 		end
 	    % here hourly_demand_day and %_night calculation starts
-            % const_a = 0;
-            % const_b = 0;
-            % for b = 1 : length(obj.buses)
+            const_a = 0;
+            const_b = 0;
+            for b = 1 : length(obj.buses)
 		% observance of all supermarkets on each bus
-                % for s = 1 : length(obj.buses(b).number_supermarkets)
+                for s = 1 : length(obj.buses(b).supermarkets)
 		    % observance of all refrigerators of each supermarket
-                %     for r = 1 : length([obj.buses(b).supermarkets(s).refrigerators])
-
-                %         const_a = const_a + (obj.buses(b).supermarkets(s).refrigerators(r).increased_demand_heat_power_day / ...
-			    % 3.6 + obj.buses(b).supermarkets(s).refrigerators(r).averaged_losses) / ...
-			    % obj.buses(b).supermarkets(s).refrigerators(r).epsilon;
-
-                %         const_b = const_b + obj.buses(b).supermarkets(s).refrigerators(r).averaged_losses / ...
-                %             obj.buses(b).supermarkets(s).refrigerators(r).epsilon;
-                %     end
-                % end
-		% !!!!!!!!!CLEAR WHAT IT IS THE FUCK!!!!!!!!!!!!
-                % if obj.buses(b).number_supermarkets ~= 0
-                %     const_a = const_a * obj.buses(b).number_supermarkets;
-                %     const_b = const_b * obj.buses(b).number_supermarkets;
-                %     obj.hourly_demand_day = const_a / 1e6;
-                %     obj.hourly_demand_night = const_b / 1e6;
-                % end
-            % end
+                    for r = 1 : length([obj.buses(b).supermarkets(s).refrigerators])
+		    const_a = const_a + ...
+		    (obj.buses(b).supermarkets(s).refrigerators(r).increased_demand_heat_power_day ...
+		    / 3.6 + obj.buses(b).supermarkets(s).refrigerators(r).averaged_losses) * ...
+		    obj.buses(b).supermarkets(s).refrigerators(r).fridge_number_scale * ...
+		    obj.buses(b).supermarkets(s).supermarket_number_scale ...
+		    / obj.buses(b).supermarkets(s).refrigerators(r).epsilon;
+		    const_b = const_b + ...
+		    obj.buses(b).supermarkets(s).refrigerators(r).averaged_transmission_losses * ...
+		    obj.buses(b).supermarkets(s).refrigerators(r).fridge_number_scale * ...
+		    obj.buses(b).supermarkets(s).supermarket_number_scale ...
+		    / obj.buses(b).supermarkets(s).refrigerators(r).epsilon;
+                    end
+                end
+            end
+            obj.hourly_demand_day = const_a / 1e6;
+            obj.hourly_demand_night = const_b / 1e6;
         end
     end
 end

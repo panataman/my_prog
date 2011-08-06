@@ -1,21 +1,28 @@
 classdef Supermarket < handle
 	%SUPERMARKET Summary of this class goes here
 	%   Detailed explanation goes here
-	
+	%%
 	properties
+	    supermarket_number_scale
 	    refrigerators
 	end
+	%%
 	methods
-		function obj = Supermarket(fridges, number_steps, days)
-		    for i = 1 : length(fridges{1})
+		function obj = Supermarket( ...
+			fridges, ...
+			supermarket_number_scale, ...
+			number_steps, ...
+			days)
+
+		    obj.supermarket_number_scale = supermarket_number_scale;
+		    for n = 1 : length(fridges{1})
 		        obj.refrigerators = [obj.refrigerators ...
 		            Refrigerator( ... 
-				fridges{1}{i},  ... 
+				fridges{1}{n},  ... 
 				number_steps, ...
 				days ...
 			    )];
-		
-			end % end for
+		    end % end for
 		end % end function Supermarket
 	end % end methods
 end % end classdef

@@ -2,7 +2,7 @@ classdef Refrigerator < handle
     %% REFRIGERATOR class created from Juri Steblau 09.03.10
     %   this class is a part of an program calls SuperM which simulates an
     %   supermarket as a cooling energy storage
-
+    %%
     properties
 	fridge_detector % the identification number of refrigerator
 	energy_consumption_day % the maxim on power, the refrigerator can use
@@ -17,11 +17,13 @@ classdef Refrigerator < handle
 	averaged_cooling_room_temperature
 	temperature_history % temperature into fridge
 	electric_power_consumption_history % the power consumption real
-	averaged_transmissions_losses
+	averaged_transmission_losses
 	modified_heat_transmission_coefficient
 	increased_demand_heat_power_day % rest_day_power
 	factor_cooling_reducer
+	fridge_number_scale % factor for scale number fridges
     end % properties end
+    %%
     methods
         function obj = Refrigerator( fridge_config, number_steps, days ) % fridge constructor
 	    % save the object properties
@@ -40,10 +42,11 @@ classdef Refrigerator < handle
             obj.electric_power_consumption_history = zeros(number_steps, days);
             obj.temperature_history(1,1) = obj.averaged_cooling_room_temperature;
 	    obj.factor_cooling_reducer = fridge_config{1,1}{15};
+	    obj.fridge_number_scale = fridge_config{2};
 	    obj.modified_heat_transmission_coefficient = fridge_config{1,1}{6} .* ...
 				fridge_config{1,1}{7}; % Watt/K end
 	    % estimation of averaged transmission losses
-	    obj.averaged_transmissions_losses = sum( ...
+	    obj.averaged_transmission_losses = sum( ...
 		obj.modified_heat_transmission_coefficient .* ...
 		( obj.temperature_outside_fridge - ...
 		obj.averaged_cooling_room_temperature ));
@@ -56,12 +59,12 @@ classdef Refrigerator < handle
 		obj.increased_demand_heat_power_day = ...
 			obj.energy_consumption_day * obj.compressor_quotient * ...
 			obj.factor_cooling_reducer * obj.epsilon * 3.6 / ...
-			12 - 2 * 3.6 * obj.averaged_transmissions_losses;
+			12 - 2 * 3.6 * obj.averaged_transmission_losses;
             else
 		% COMBINE FRIDGE
                 obj.increased_demand_heat_power_day = (obj.cooling_power * ...
 			obj.factor_cooling_reducer - ...
-			obj.averaged_transmissions_losses) * 3.6; % in kJ (eigentlich Leistung)
+			obj.averaged_transmission_losses) * 3.6; % in kJ (eigentlich Leistung)
 	    end % if end
 
         end % function constructor end
