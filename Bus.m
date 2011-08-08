@@ -26,7 +26,7 @@ classdef Bus < handle % have to be handle class becouse of the speed
 					number_steps, ...
 					days)];
                 else
-                    obj.supermarkets = [obj.supermarkets 0];
+                    obj.supermarkets = [obj.supermarkets []];
                 end
             end
         end

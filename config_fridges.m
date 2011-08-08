@@ -18,7 +18,7 @@ NK_KT_S = { ...
 
 TK_TKT_S = { ...
     1, ... % the number decides which kind of fridge is installed one means plug in fridge or two combine fridge
-    2.088e5, ... % energy consumption per day Wh/24h
+    8.88e4, ... % energy consumption per day Wh/24h
     1.5, ... % epsilon
     0.66, ... % compressor quotient
     0, ... % cooling power in W

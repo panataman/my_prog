@@ -1,5 +1,4 @@
-function [ ...
-		r, ...
+function [ 	load_output, ...
 		grid_system, ...
 		multiple_dimension_all_data_matrix, ...
 		control_power_WO, 
@@ -16,13 +15,17 @@ function [ ...
     % object strategy class Cooling_strategy initialised
     strategy = Cooling_strategy;
 
+    %%------------load Data---------------%%
+    load 'gen_output_RT'
+    load 'gen_output_DA'
     % this is the real power that wind power can supply
-    gen_output_DA(4:7,:,:) * 0.85;
-    operating_gen_output_RT_gross = sum(operating_gen_output_RT);
-    promised_gen_output_DA_gross = sum(gen_output_DA(4:7,:,:) * 0.15);
+    gen_output_real_T = gen_output_RT(4:7,:,1:number_days);
+    gen_output_day_A = gen_output_DA(4:7,:,1:number_days);
+    promised_gen_output_DA_gross = sum(gen_output_DA(4:7,:,1:number_days) * 0.15);
+    %%------------Data loaded---------------%%
 
-    r = zeros(size(operating_gen_output_RT));
-    multiple_dimension_all_data_matrix = zeros([size(operating_gen_output_RT) 7]);
+    load_output = zeros(size(gen_output_RT));
+    multiple_dimension_all_data_matrix = zeros([size(gen_output_RT) 7]);
 
     %% loop run down the "w" days of year
     for w = 1 : number_days
@@ -45,7 +48,7 @@ function [ ...
 			promised_gen_output_DA_gross(:,l,w), ...
 			number_steps, ...
 			number_days);
-            
+
             for m = 1:length(fridges_range_for_load_RT(:,1))
 
 		b = fridges_range_for_load_RT(m,2); % number_bus
@@ -64,14 +67,15 @@ function [ ...
 			fridges_range_for_load_RT(m,6));
                 
                 % THE RETURN LOAD OUTPUT MATRIX of the WILL BE WRITTEN
-                r(b,l,w) = r(b,l,w) + fridges_range_for_load_RT(m,10);
+                load_output(b,l,w) = load_output(b,l,w) + ...
+			fridges_range_for_load_RT(m,10);
                 
                 % THE RETURN ELECTRIC POWER INTEGRATION MATRIX
                 % overall electric power consumption
 		multiple_dimension_all_data_matrix(b,l,w,1) = ...
 			hourly_demand_out; %fridges_range_for_load_RT(m,10);
                 
-                % overall electric power integrated
+		% overall electric power integrated
 		multiple_dimension_all_data_matrix(b,l,w,2) = ...
 			multiple_dimension_all_data_matrix(b,l,w,2) + ...
 			fridges_range_for_load_RT(m,11);
@@ -97,7 +101,7 @@ function [ ...
 		multiple_dimension_all_data_matrix(b,l,w,7) = power_promised(b);
             end
             
-            r(b,l,w) = r(b,l,w) - hourly_demand_out;
+            load_output(b,l,w) = load_output(b,l,w) - hourly_demand_out;
             
         end
     end
@@ -111,27 +115,11 @@ function [ ...
 	(sum(sum(sum(multiple_dimension_all_data_matrix(:,:,:,1)))) - ...
 	sum(sum(sum(multiple_dimension_all_data_matrix(:,:,:,7))))) + ...
 	sum(sum(sum(multiple_dimension_all_data_matrix(:,:,:,6))));
+
+	sum(sum(sum(multiple_dimension_all_data_matrix(:,:,:,2))))
+	sum(sum(sum(multiple_dimension_all_data_matrix(:,:,:,6))))
+	sum(sum(sum(multiple_dimension_all_data_matrix(:,:,:,7))))
     
-    sum(sum(sum(multiple_dimension_all_data_matrix(:,:,:,2))))
-    sum(sum(sum(multiple_dimension_all_data_matrix(:,:,:,6))))
-    sum(sum(sum(multiple_dimension_all_data_matrix(:,:,:,7))))
-    
-    function [ operating_gen_output_RT, ...
-		operating_gen_output_RT_gross, ...
-		promised_gen_output_DA_gross, ...
-		gen_output_real_T, ...
-		gen_output_day_A ] = estimator_power_for_load_gross
-        % load realtime wind power generator data for each bus
-        load 'gen_output_RT'
-        load 'gen_output_DA'
-        gen_output_day_A = gen_output_DA(4:7,:,1:number_days);
-        gen_output_real_T = gen_output_RT(4:7,:,1:number_days);
-        operating_gen_output_RT = gen_output_RT(4:7,:,:) - ...
-            gen_output_DA(4:7,:,:) * 0.85;
-        operating_gen_output_RT_gross = sum(operating_gen_output_RT);
-        promised_gen_output_DA_gross = sum(gen_output_DA(4:7,:,:) * 0.15);
-        
-    end
 end
 
 
